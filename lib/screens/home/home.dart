@@ -60,6 +60,7 @@ class Home extends StatelessWidget {
                 } else if(index > 1){
                   bloc.inSearch.add(null);
                   return Container(
+                    margin: EdgeInsets.all(10),
                     height: 40,
                     alignment: Alignment.center,
                     child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.red),)
