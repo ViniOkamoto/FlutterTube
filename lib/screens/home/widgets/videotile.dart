@@ -1,9 +1,11 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:bloc_tube/blocs/favorite_bloc.dart';
 import 'package:bloc_tube/models/video.dart';
 import 'package:flutter/material.dart';
 
 class VideoTile extends StatelessWidget{
   final Video video;
-  
+  final bloc = BlocProvider.getBloc<FavoriteBloc>();
   VideoTile(this.video);
 
 
@@ -48,13 +50,25 @@ class VideoTile extends StatelessWidget{
                   ],
                 ),
               ),
-              IconButton(
-                icon: Icon(Icons.star_border),
-                color: Colors.white,
-                iconSize: 30,
-                onPressed: (){
-
+              StreamBuilder<Map<String,Video>>(
+                stream: bloc.outVideos,
+                initialData: {},
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return IconButton(
+                      icon: Icon(snapshot.data.containsKey(video.id) ?
+                      Icons.star : Icons.star_border),
+                      color: Colors.white,
+                      iconSize: 30,
+                      onPressed: (){
+                        bloc.toggleFavorite(video);
+                      },
+                    );
+                  }else{
+                    return CircularProgressIndicator();
+                  }
                 },
+
               )
             ],
           )
