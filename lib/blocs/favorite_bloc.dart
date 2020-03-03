@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:rxdart/rxdart.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:bloc_tube/models/video.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteBloc extends BlocBase{
   Map<String, Video> _favorites = {};
 
-  final StreamController<Map<String, Video>> _favController = StreamController<Map<String, Video>>.broadcast();
+  final _favController = BehaviorSubject<Map<String, Video>>(seedValue: {});
 
   Stream<Map<String, Video>> get outVideos => _favController.stream;
 
@@ -19,6 +18,8 @@ class FavoriteBloc extends BlocBase{
        _favorites = json.decode(prefs.getString("favorites")).map((key, value){
          return MapEntry(key, Video.fromJason(value));
        }).cast<String, Video>();
+
+       //cast is been used to convert the dynamic to String.
        _favController.add(_favorites);
      }
     });
@@ -32,6 +33,7 @@ class FavoriteBloc extends BlocBase{
 
     _saveFav();
   }
+  //here to translate the object to json
   void _saveFav() {
     SharedPreferences.getInstance().then((prefs){
       prefs.setString("favorites", json.encode(_favorites));
